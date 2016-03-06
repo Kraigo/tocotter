@@ -10,7 +10,7 @@ app.directive('tctComposer', function() {
 });
 
 app.controller('ComposerCtrl', function($scope, twitter, composer, timeline){
-	$scope.loading = false;
+	$scope.uploading = false;
 
 	$scope.updateStatus = function() {
 		if (composer.text.length == 0 && composer.text.length > 140) return false;
@@ -20,9 +20,9 @@ app.controller('ComposerCtrl', function($scope, twitter, composer, timeline){
 		if (composer.reply) params.in_reply_to_status_id = composer.reply.id_str;
 		if (composer.media[0]) params.media_ids = composer.media;
 
-		$scope.loading = true;
+		$scope.uploading = true;
 		twitter.postUpdateStatus(params).then(function(res) {
-			$scope.loading = false;
+			$scope.uploading = false;
 			composer.emptyComposer();
 			timeline.loadTimeline(timeline.timelines);
 		});

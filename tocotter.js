@@ -31,12 +31,26 @@ app.get('/api/:section/:action', function (req, res) {
 
 app.post('/api/:section/:action', multipartyMiddleware, function (req, res) {
 	// console.log('/'+req.params.section+'/'+req.params.action, req.body);
-	console.log(req.files);
-	client.post('/'+req.params.section+'/'+req.params.action, req.body, function(error, tweets, response){
-		if (!error) {
-			res.send(tweets);
-		}
-	});	
+
+	if (req.body.file) {
+
+		console.log(req.body.file);
+		client.post('/media/upload', {media_data: req.body.file}, function(error, media, response){
+			console.log(error);
+			if (!error) {
+				console.log(media.media_id_strin);
+				res.send(media.media_id_string);
+			}
+		});
+	} else {
+		client.post('/'+req.params.section+'/'+req.params.action, req.body, function(error, tweets, response){
+			if (!error) {
+				res.send(tweets);
+			}
+		});
+	}
+
+
 });
 
 //app.get('/request/:link', function(req, res) {

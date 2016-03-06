@@ -134,10 +134,10 @@ Timeline.prototype = {
 			})
 		}
 	},
-	addTweet:function(elm) {
+	addTweet: function(elm) {
 		this.data.unshift(elm);
 	},
-	isUnique(elm) {
+	isUnique: function(elm) {
 		
 		var unique = true;
 

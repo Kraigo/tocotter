@@ -12,7 +12,7 @@
 			<div class="composer-reply-text" ng-bind="composer.reply.retweeted_status.text || composer.reply.text"></div>
 
 		</div>
-		<textarea id="composer-input" class="composer-textarea" ng-model="composer.text" cols="30" rows="10" ng-model="status.text" ng-disabled="loading" focus-me="composer.isActive"></textarea>
+		<textarea id="composer-input" class="composer-textarea" ng-model="composer.text" cols="30" rows="10" ng-model="status.text" ng-disabled="uploading" focus-me="composer.isActive"></textarea>
 	</div>
 
 	<div class="controls-container">
