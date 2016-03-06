@@ -1,6 +1,7 @@
 
 .idea
 *.bat
+
 # Logs
 logs
 *.log

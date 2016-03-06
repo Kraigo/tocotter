@@ -22,13 +22,26 @@
 
 		<p class="tweet-text" ng-bind-html="tweet.retweeted_status || tweet | entities" short-click="$parent.timeline.addDetail(tweet)"></p>
 
-		<div class="tweet-media" ng-if="tweet.extended_entities" ng-class="{'more-media': tweet.extended_entities.media.length > 1 && !showMoreMedia }" ng-click="showMoreMedia = true">
+
+		<!-- Media -->
+		<div class="tweet-media" ng-if="tweet.extended_entities.media" ng-class="{'more-media': tweet.extended_entities.media.length > 1 && !showMoreMedia }" ng-click="showMoreMedia = true">
 			<div ng-repeat="media in tweet.extended_entities.media" class="tweet-media-item">
 				<img ng-src="{{media.media_url}}" ng-if="media.type === 'photo'">
 
 				<video ng-if="media.type === 'animated_gif'" controls loop >
 					<source vsrc="{{media.media_url | video}}" type="video/mp4">
 				</video>
+			</div>
+		</div>
+
+		<!-- External Media -->
+		<div class="tweet-media" ng-if="tweet.entities.urls" ng-class="{'more-media': tweet.entities.media.length > 1 && !showMoreMedia }" ng-click="showMoreMedia = true">
+			<div ng-repeat="media in tweet.entities.urls" class="tweet-media-item">
+				<tct-media src="media.expanded_url"></tct-media>
+
+				<!--<video ng-if="media.type === 'animated_gif'" controls loop >-->
+					<!--<source vsrc="{{media.expanded_url}}" type="video/mp4">-->
+				<!--</video>-->
 			</div>
 		</div>
 

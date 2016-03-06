@@ -49,4 +49,4 @@ app.service('twitter', function(base){
 			return base.file('/media/upload', data);
 		}
 	}
-})
+});

@@ -1,6 +1,6 @@
 "use strict";
 
-app.factory('base', function($http, $q){
+app.factory('base', function($http, $q, CONFIG, Upload){
     return {
         getHeaders: function (url) {
             var header = {
@@ -18,13 +18,19 @@ app.factory('base', function($http, $q){
             return this.request('POST', url, { data: data });
         },
 
+        file: function(url, data) {
+            return Upload.upload({
+                url: CONFIG.baseUrl + url,
+                data: data
+            });
+        },
+
         request: function (method, url, options) {
             var deferred = $q.defer();
             var self = this;
-            var baseUrl = '/api';
 
             options.method = method;
-            options.url = baseUrl + url;
+            options.url = CONFIG.baseUrl + url;
             options.headers = this.getHeaders(url);
 
             $http(options)

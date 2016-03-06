@@ -91,3 +91,28 @@ app.directive('vsrc', function() {
 		}
 	}
 });
+
+
+app.directive('tctMedia', function() {
+	return {
+		restrict: 'E',
+		replace: true,
+		template: '<img ng-src="{{url}}" ng-if="show">',
+		link: function(scope, element, attr) {
+			scope.url = scope.$eval(attr.src);
+			scope.show = false;
+
+			var regsMedia = [
+				{reg: /imgur\.com\/(\w*)/, rep: 'i.imgur.com/$1.jpg'}
+			];
+			for (var i=0; i < regsMedia.length; i++) {
+				if (regsMedia[i].reg.test(scope.url)) {
+					scope.url = scope.url.replace(regsMedia[i].reg, regsMedia[i].rep);
+					scope.show = true;
+					break;
+				}
+			}
+
+		}
+	}
+});
