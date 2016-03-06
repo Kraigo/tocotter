@@ -1,0 +1,93 @@
+
+app.directive("tctFileRead", function () {
+	return {
+		scope: {
+			tctFileRead: "="
+		},
+		link: function (scope, element, attrs) {
+			element.bind("change", function (changeEvent) {
+				var reader = new FileReader();
+				reader.onload = function (loadEvent) {
+					scope.$apply(function () {
+						scope.tctFileRead(loadEvent.target.result);
+					});
+				};
+				reader.readAsDataURL(changeEvent.target.files[0]);
+			});
+		}
+	};
+});
+
+app.directive('tctRepeatFinish', function(timeline) {
+	return function(scope, element, attrs) {
+			if (scope.$last){
+				setTimeout(timeline.restorePosition);
+			}
+	};
+})
+
+app.directive("tctSavePosition", function (timeline) {
+	return function(scope, element, attrs) {
+		angular.element(element).bind("scroll", function() {
+			var column = this;
+			var columntTop = column.scrollTop;
+			var elements = column.querySelectorAll('.tweet-container');
+
+			for (var i in elements) {
+				if (elements[i].offsetTop > columntTop) {
+					timeline.savePosition(elements[i].id);
+					break;
+				}			 
+			}
+		});
+	};
+});
+
+
+app.directive("shortClick", function(){
+	return {
+		restrict: "A",
+		link: function(scope, element, attr){
+			scope.time = null;
+
+			element.on("mousedown mouseup", function(e){
+
+				if(e.type == "mousedown" && e.button === 0){
+					scope.time= Date.now();
+				}
+
+				if(e.type == "mouseup" && e.button === 0 && e.target == this){
+					if(Date.now() - scope.time > 200){
+						return false;
+					} else {
+						scope.$eval(attr.shortClick);
+					}
+				}
+			});
+		}
+	}
+});
+
+app.directive('focusMe', function($timeout) {
+	return {
+		scope: {
+			trigger: '=focusMe'
+		},
+		link: function(scope, element) {
+			scope.$watch('trigger', function(value) {
+				if(!!value) {
+					$timeout(function() {element[0].focus();}, 100);
+				}
+			});
+		}
+	};
+});
+
+app.directive('vsrc', function() {
+	return {
+		restrict: 'A',
+		link: function(scope, element, attr) {
+			attr.$set('src', attr.vsrc);
+		}
+	}
+});

@@ -1,0 +1,39 @@
+<div clas="composer">
+	<div class="composer-container" ng-class="{'collapsed': !composer.isActive}">
+
+		<div class="right-close" ng-click="close()"><span class="icon-cross"></span></div>
+		<h3 class="composer-title">
+			Сompose tweet {{test}}
+			<span class="composer-count" ng-if="composer.text.length > 0">{{140 - composer.text.length}}</span>
+		</h3>
+
+		<div class="composer-reply" ng-if="composer.reply">
+			<div class="composer-reply-title">Reply to {{composer.reply.user.name}}</div>
+			<div class="composer-reply-text" ng-bind="composer.reply.retweeted_status.text || composer.reply.text"></div>
+
+		</div>
+		<textarea id="composer-input" class="composer-textarea" ng-model="composer.text" cols="30" rows="10" ng-model="status.text" ng-disabled="loading" focus-me="composer.isActive"></textarea>
+	</div>
+
+	<div class="controls-container">
+		<ul ng-hide="composer.isActive">
+			<li class="control primary" ng-click="refresh()"><span class="icon-refresh" ng-class="{spin: loading.length > 0}"></span></li>
+			<li class="control primary" ng-click="openComposer()">
+				<span class="icon-pencil"></span>
+			</li>
+		</ul>
+
+		<ul ng-show="composer.isActive">
+			<li class="control disabled"><span class="icon-location"></span></li>
+			<li class="control primary">
+				<label>
+					<span class="icon-photo"></span>
+					<input type="file" style="display: none;" tct-file-read="uploadMedia">
+					<label>
+			</li>
+			<li class="control primary" ng-click="updateStatus()" ng-class="{disabled: composer.text.length == 0}">
+				<span class="icon-right"></span>
+			</li>
+		</ul>
+	</div>
+</div>

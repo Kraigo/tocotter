@@ -1,0 +1,112 @@
+@import 'variables';
+@import url(reset.css)
+@import url(icons.css)
+@import 'keyframes';
+
+html
+	font-size: 62.5%
+html, body 
+	height: 100%
+body 
+	background-color: #dddddd
+	font-family: Arial
+	overflow: hidden
+	font-size: 1.4rem
+
+a
+	color: $primary-color
+	text-decoration: none
+
+a:hover
+	text-decoration: underline
+	cursor: pointer
+
+::-webkit-scrollbar
+	width: 8px
+	height: 8px
+::-webkit-scrollbar-track 
+	background-color: #D6D4D4
+	border-radius: 10px
+::-webkit-scrollbar-thumb 
+	border-radius: 10px
+	background-color: #B7B7B7
+	@include vendor(transition, all 0.3s ease)
+
+.menu
+	width: 200px
+	height: 100%
+	background-color: #fff
+	position: fixed
+	z-index: 10
+	left: 0
+	top: 0
+	box-shadow: 0 0 3px rgba(0,0,0,0.4)
+	@include vendor(transition, all 0.2s ease)
+
+
+.main
+	margin-left: 200px
+	height: 100%
+	overflow-y: hidden
+	overflow-x: auto
+	padding: 10px
+	@include vendor(box-sizing, border-box)
+	@include vendor(transition, all 0.2s ease)
+
+	&-columns 
+		min-width: 700px
+		height: 100%
+
+@import "column"
+@import "tweet"
+@import "menu"
+@import "composer"
+
+/* Controlls */
+
+.control
+	display: inline-block
+	border-radius: 50%
+	padding: 0.5em
+	font-size: 1.6em
+	margin: 0 5px
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3)
+	/* text-shadow: 1px 1px rgba(0, 0, 0, 0.3) */
+	@include vendor(transition, all 0.2s ease)
+	@include vendor(animation, fadeFromDown 0.3s ease)
+
+	&s-container 
+		position: absolute
+		bottom: 0
+		right: 0
+		margin: 40px
+
+	&.primary 
+		color: #FFF
+		background-color: $primary-color
+
+	&.disabled 
+		background-color: #9BBDD6
+		color: #E0E0E0
+
+
+	&:not(.disabled):hover 
+		cursor: pointer
+		background-color: #2D8FD6
+	
+
+.spin
+	display: inline-block
+	@include vendor(animation, spin 1s linear infinite)
+	@include vendor(transform-origin, 49% 52%)	
+
+
+.right-close 
+	position: absolute
+	z-index: 2
+	top: 20px
+	right: 20px
+
+	&:hover 
+		color: #666
+		cursor: pointer

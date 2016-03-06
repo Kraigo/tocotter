@@ -1,0 +1,33 @@
+<header class="menu">
+
+	<div class="menu-toggle" ng-click="showMenu=!showMenu">
+		<span class="icon-menu"></span>
+	</div>
+	<div class="profile">
+		<div class="profile-banner" style="background-image: url({{user.data.profile_banner_url}})"></div>
+		<div class="profile-ava">
+			<img ng-src="{{user.data.profile_image_url}}" />
+		</div>
+		<div class="profile-title">
+			<div class="tweet-title-nick" ng-bind="'@'+user.data.screen_name"></div>
+			<div class="tweet-title-name" ng-bind="user.data.name"></div>			
+		</div>
+		<div class="profile-count">
+			<div>
+				Tweets: <span ng-bind="user.data.statuses_count"></span>
+			</div>
+			<div>
+				Followers: <span ng-bind="user.data.followers_count"></span>
+			</div>
+			<div>
+				Follow: <span ng-bind="user.data.friends_count"></span>
+			</div>
+		</div>
+	</div>
+
+	<ul class="menu-columns">
+		<li ng-repeat="timeline in timelines" ng-bind="timeline.id"></li>
+		<!-- <li>+ Add Column</li> -->
+	</ul>
+
+</header>
