@@ -1,6 +1,6 @@
 var Twitter = require('twitter');
 var express = require('express');
-//var bodyParser = require('body-parser');
+var bodyParser = require('body-parser');
 var request = require('request');
 var cheerio = require('cheerio')
 
@@ -13,7 +13,7 @@ var open = require('open');
 
 var app = express();
 
-//app.use(bodyParser());
+app.use(bodyParser());
 app.use(express.static('public'));
 
 // app.use(busboy());
@@ -32,23 +32,23 @@ app.get('/api/:section/:action', function (req, res) {
 app.post('/api/:section/:action', multipartyMiddleware, function (req, res) {
 	// console.log('/'+req.params.section+'/'+req.params.action, req.body);
 
-	if (req.body.file) {
-
-		console.log(req.body.file);
-		client.post('/media/upload', {media_data: req.body.file}, function(error, media, response){
-			console.log(error);
-			if (!error) {
-				console.log(media.media_id_strin);
-				res.send(media.media_id_string);
-			}
-		});
-	} else {
+	//if (req.body.file) {
+    //
+	//	console.log(req.body.file);
+	//	client.post('/media/upload', {media_data: req.body.file}, function(error, media, response){
+	//		console.log(error);
+	//		if (!error) {
+	//			console.log(media.media_id_strin);
+	//			res.send(media.media_id_string);
+	//		}
+	//	});
+	//} else {
 		client.post('/'+req.params.section+'/'+req.params.action, req.body, function(error, tweets, response){
 			if (!error) {
 				res.send(tweets);
 			}
 		});
-	}
+	//}
 
 
 });
