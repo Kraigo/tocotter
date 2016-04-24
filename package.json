@@ -2,6 +2,7 @@
   "name": "Tocotter",
   "version": "0.4.0",
   "dependencies": {
+    "body-parser": "^1.15.0",
     "cheerio": "^0.20.0",
     "connect-multiparty": "^2.0.0",
     "cookie-parser": "^1.4.1",

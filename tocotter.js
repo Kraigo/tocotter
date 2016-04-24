@@ -30,17 +30,20 @@ app.use(express.static('public'));
 // var client = new Twitter(config.twitterAccess);
 // var client = {};
 
-app.get('/api/:section/:action', function (req, res) {
+//app.get('/api/:section/:action', function (req, res) {
+//
+//	db.findOne({accessToken: req.cookies.accessToken}, function(err, auth) {
+//
+//	});
+//	client.get('/'+req.params.section+'/'+req.params.action, req.query, function(error, tweets, response){
+//		if (!error) {
+//			res.send(tweets);
+//		}
+//	});
+//});
 
-	db.findOne({accessToken: req.cookies.accessToken}, function(err, auth) {
 
-	});
-	client.get('/'+req.params.section+'/'+req.params.action, req.query, function(error, tweets, response){
-		if (!error) {
-			res.send(tweets);
-		}
-	});	
-});
+app.use('/api', require('./routes/api'));
 
 // app.post('/api/:section/:action', multipartyMiddleware, function (req, res) {
 // 	// console.log('/'+req.params.section+'/'+req.params.action, req.body);
