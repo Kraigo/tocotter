@@ -15,8 +15,8 @@ app.service('timeline', function(twitter, CONFIG) {
 	};
 	self.timelines = [
 		new Timeline('home', twitter),
-		new Timeline('mentions', twitter),
-		new Timeline('user', twitter)
+		new Timeline('mentions', twitter)
+		//new Timeline('user', twitter)
 	];
 
 	self.loadTimeline = function(timelines) {

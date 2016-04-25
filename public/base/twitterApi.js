@@ -3,13 +3,13 @@
 app.service('twitter', function(base){
 	return {
 		getHomeTimeline: function(data) {
-			return base.get('/statuses/home_timeline', data);
+			return base.get('/getTimeline/home', data);
 		},
 		getUserTimeline: function(data) {
-			return base.get('/statuses/user_timeline',  data);
+			return base.get('/getTimeline/user',  data);
 		},
 		getMentionsTimeline: function(data) {
-			return base.get('/statuses/mentions_timeline',  data);
+			return base.get('/getTimeline/timeline',  data);
 		},
 
 		getTimeline: function(timelineId, data) {

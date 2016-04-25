@@ -27,23 +27,7 @@ app.use(express.static('public'));
 
 
 
-// var client = new Twitter(config.twitterAccess);
-// var client = {};
-
-//app.get('/api/:section/:action', function (req, res) {
-//
-//	db.findOne({accessToken: req.cookies.accessToken}, function(err, auth) {
-//
-//	});
-//	client.get('/'+req.params.section+'/'+req.params.action, req.query, function(error, tweets, response){
-//		if (!error) {
-//			res.send(tweets);
-//		}
-//	});
-//});
-
-
-app.use('/api', require('./routes/api'));
+//app.use('/api', require('./routes/api'));
 
 // app.post('/api/:section/:action', multipartyMiddleware, function (req, res) {
 // 	// console.log('/'+req.params.section+'/'+req.params.action, req.body);
@@ -179,6 +163,42 @@ app.get('/timeline', function (req, res) {
 	});
 
 	
+});
+
+app.use(function(req, res, next) {
+	db.findOne({accessToken: req.cookies.accessToken}, function(err, auth) {
+		req.auth = auth;
+		next();
+	});
+});
+
+app.get('/api/:section/:action', function (req, res) {
+	//console.log('api/'+req.params.section+'/' + req.params.action, req);
+	twitter[req.params.section](
+		req.params.action,
+		req.query,
+		req.auth.accessToken,
+		req.auth.accessTokenSecret,
+		function(error, data, response) {
+			if (error) return console.log(error);
+			res.send(data);
+		}
+	);
+
+});
+app.post('/api/:section/:action', function (req, res) {
+	//console.log('api/'+req.params.section+'/' + req.params.action, req);
+	twitter[req.params.section](
+		req.params.action,
+		req.body,
+		req.auth.accessToken,
+		req.auth.accessTokenSecret,
+		function(error, data, response) {
+			if (error) return console.log(error);
+			res.send(data);
+		}
+	);
+
 });
 
 var server = app.listen(8080, function () {
