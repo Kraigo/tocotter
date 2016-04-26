@@ -16,14 +16,13 @@ db.ensureIndex({ fieldName: 'expirationDate', expireAfterSeconds: 0 }, function(
 	if (err) throw err;
 });
 
-var multiparty = require('connect-multiparty');
-var multipartyMiddleware = multiparty();
+//var multiparty = require('connect-multiparty');
+//var multipartyMiddleware = multiparty();
 
 var app = express();
 
 app.use(bodyParser());
 app.use(cookieParser());
-app.use(express.static('public'));
 
 
 
@@ -83,7 +82,7 @@ app.get('/auth', function (req, res) {
 
 	twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
 
-		if (error) return console.log("Error getting OAuth request token : " + error);
+		if (error) return console.log("Error getting OAuth request token:", error);
 		
 		var expires= new Date();		
 		expires.setHours(expires.getHours() + 1);		
@@ -95,7 +94,7 @@ app.get('/auth', function (req, res) {
 			requestTokenSecret: requestTokenSecret,
 			expirationDate: expires
 		}, function(err, doc) {
-			if (err) console.log(err);
+			if (err) console.log("Error insert request token:",err);
 
 			res.redirect(twitter.getAuthUrl(requestToken));
 		});
@@ -110,11 +109,11 @@ app.get('/callback', function (req, res) {
 
 	db.findOne({requestToken: req.cookies.requestToken}, function(err, auth) {
 
-		if (err) return console.log(err);
+		if (err) return console.log("Error find request token:", err);
 
 		twitter.getAccessToken(auth.requestToken, auth.requestTokenSecret, req.query.oauth_verifier, function(error, accessToken, accessTokenSecret, results) {
 		
-			if (error) return console.log(error);
+			if (error) return console.log("Error get access token:", error);
 
 			var expires = new Date();		
 			expires.setFullYear(expires.getFullYear() + 10);		
@@ -133,7 +132,7 @@ app.get('/callback', function (req, res) {
 
 			db.update({ requestToken: req.cookies.requestToken }, dbupdate, {},
 				function () {
-					res.redirect('/timeline');
+					res.redirect('/');
 				}
 			);
 			
@@ -144,57 +143,45 @@ app.get('/callback', function (req, res) {
 	
 });
 
-app.get('/timeline', function (req, res) {
-
-	db.findOne({accessToken: req.cookies.accessToken}, function(err, auth) {
-
-		var options = {};
-		twitter.getTimeline("home_timeline", 
-			options,
-			auth.accessToken,
-			auth.accessTokenSecret,
-			function(error, data, response) {
-				if (error) return console.log(error);
-
-				res.send(data);
-			}
-		);
-
-	});
-
-	
-});
 
 app.use(function(req, res, next) {
+
+	if (!req.cookies.accessToken) return res.redirect('/auth');
+
 	db.findOne({accessToken: req.cookies.accessToken}, function(err, auth) {
+
+		if (!auth) return res.redirect('/auth');
+
 		req.auth = auth;
 		next();
 	});
 });
 
+
+app.use(express.static('public'));
+
+
 app.get('/api/:section/:action', function (req, res) {
-	//console.log('api/'+req.params.section+'/' + req.params.action, req);
 	twitter[req.params.section](
 		req.params.action,
 		req.query,
 		req.auth.accessToken,
 		req.auth.accessTokenSecret,
 		function(error, data, response) {
-			if (error) return console.log(error);
+			if (error) return console.log("Error api GET %s/%s", req.params.section, req.params.action, error);
 			res.send(data);
 		}
 	);
 
 });
 app.post('/api/:section/:action', function (req, res) {
-	//console.log('api/'+req.params.section+'/' + req.params.action, req);
 	twitter[req.params.section](
 		req.params.action,
 		req.body,
 		req.auth.accessToken,
 		req.auth.accessTokenSecret,
 		function(error, data, response) {
-			if (error) return console.log(error);
+			if (error) return console.log("Error api POST %s/%s", req.params.section, req.params.action, error);
 			res.send(data);
 		}
 	);
