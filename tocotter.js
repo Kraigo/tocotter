@@ -83,7 +83,7 @@ app.get('/auth', function (req, res) {
 
 	twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
 
-		if (error) return console.log("Error getting OAuth request token:", error);
+		if (error) return res.send("Error getting OAuth request token: " + JSON.stringify(error));
 		
 		var expires= new Date();		
 		expires.setHours(expires.getHours() + 1);		
@@ -95,7 +95,7 @@ app.get('/auth', function (req, res) {
 			requestTokenSecret: requestTokenSecret,
 			expirationDate: expires
 		}, function(err, doc) {
-			if (err) console.log("Error insert request token:",err);
+			if (err) return res.send("Error insert request token: " + JSON.stringify(err));
 
 			res.redirect(twitter.getAuthUrl(requestToken));
 		});
@@ -110,11 +110,11 @@ app.get('/callback', function (req, res) {
 
 	db.findOne({requestToken: req.cookies.requestToken}, function(err, auth) {
 
-		if (err) return console.log("Error find request token:", err);
+		if (err) return res.send("Error find request token: " + JSON.stringify(err));
 
 		twitter.getAccessToken(auth.requestToken, auth.requestTokenSecret, req.query.oauth_verifier, function(error, accessToken, accessTokenSecret, results) {
 		
-			if (error) return console.log("Error get access token:", error);
+			if (error) return res.send("Error get access token: " + JSON.stringify(error));
 
 			var expires = new Date();		
 			expires.setFullYear(expires.getFullYear() + 10);		
