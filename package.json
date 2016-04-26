@@ -1,6 +1,9 @@
 {
   "name": "Tocotter",
   "version": "0.4.0",
+  "scripts": {
+    "start": "node tocotter.js"
+  },
   "dependencies": {
     "body-parser": "^1.15.0",
     "cheerio": "^0.20.0",
