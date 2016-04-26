@@ -4,7 +4,7 @@ app.directive('tctMainMenu', function() {
 	return {
 		restrict: 'E',
 		replace: true,
-		templateUrl: 'mainmenu/mainmenu.html',
+		templateUrl: 'app/mainmenu/mainmenu.html',
 		controller: 'MainmenuCtrl'
 	}
 });

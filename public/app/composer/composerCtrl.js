@@ -4,8 +4,8 @@ app.directive('tctComposer', function() {
 	return {
 		restrict: 'E',
 		replace: true,
-		controller: 'ComposerCtrl',
-		templateUrl: 'composer/composer.html'
+		templateUrl: 'app/composer/composer.html',
+		controller: 'ComposerCtrl'
 	}
 });
 

@@ -2,8 +2,8 @@ app.directive('tctTweet', function() {
     return {
         restrict: 'E',
         replace: true,
+        templateUrl: 'app/tweet/tweet.html',
         controller: 'TweetCtrl',
-        templateUrl: 'tweet/tweet.html',
         scope: {
             tweet: "=source"
         }
