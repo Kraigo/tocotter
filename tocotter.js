@@ -20,6 +20,7 @@ db.ensureIndex({ fieldName: 'expirationDate', expireAfterSeconds: 0 }, function(
 //var multipartyMiddleware = multiparty();
 
 var app = express();
+app.set('port', (process.env.PORT || 5000));
 
 app.use(bodyParser());
 app.use(cookieParser());
@@ -168,7 +169,7 @@ app.get('/api/:section/:action', function (req, res) {
 		req.auth.accessToken,
 		req.auth.accessTokenSecret,
 		function(error, data, response) {
-			if (error) return console.log("Error api GET %s/%s", req.params.section, req.params.action, error);
+			if (error) return console.log("Error api GET %s/%s:", req.params.section, req.params.action, error);
 			res.send(data);
 		}
 	);
@@ -181,15 +182,15 @@ app.post('/api/:section/:action', function (req, res) {
 		req.auth.accessToken,
 		req.auth.accessTokenSecret,
 		function(error, data, response) {
-			if (error) return console.log("Error api POST %s/%s", req.params.section, req.params.action, error);
+			if (error) return console.log("Error api POST %s/%s:", req.params.section, req.params.action, error);
 			res.send(data);
 		}
 	);
 
 });
 
-var server = app.listen(process.env.PORT || 8080, function () {
-	console.log('Tocotter listening :%s', process.env.PORT || 8080);
+var server = app.listen(app.get('port'), function () {
+	console.log('Tocotter listening :%s', app.get('port'));
 	// open('http://localhost:8080');
 });
 
