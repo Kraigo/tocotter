@@ -9,7 +9,7 @@ app.service('twitter', function(base){
 			return base.get('/getTimeline/user',  data);
 		},
 		getMentionsTimeline: function(data) {
-			return base.get('/getTimeline/timeline',  data);
+			return base.get('/getTimeline/mentions',  data);
 		},
 
 		getTimeline: function(timelineId, data) {

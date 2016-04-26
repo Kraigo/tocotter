@@ -1,6 +1,6 @@
 "use strict";
 
-var app = angular.module('tocotter', ['ngFileUpload']);
+var app = angular.module('tocotter', ['ngFileUpload', 'ngCookies']);
 
 
 app.constant('CONFIG', {

@@ -1,6 +1,6 @@
 "use strict";
 
-app.service('timeline', function(twitter, CONFIG) {
+app.service('timeline', function($cookies, twitter, CONFIG) {
 	var self = this;
 
 	self.status = {
@@ -15,15 +15,15 @@ app.service('timeline', function(twitter, CONFIG) {
 	};
 	self.timelines = [
 		new Timeline('home', twitter),
-		new Timeline('mentions', twitter)
-		//new Timeline('user', twitter)
+		new Timeline('mentions', twitter),
+		new Timeline('user', twitter)
 	];
 
 	self.loadTimeline = function(timelines) {
 		angular.forEach(timelines, function(timeline) {	
 			timeline.data[0]
-				? self.loadTimelineData(timeline, {since_id: timeline.data[0].id_str})
-				: self.loadTimelineData(timeline, {count: CONFIG.numLoadedTwt});
+				? self.loadTimelineData(timeline, {since_id: timeline.data[0].id_str, user_id: $cookies.get('uid')})
+				: self.loadTimelineData(timeline, {count: CONFIG.numLoadedTwt, user_id: $cookies.get('uid')});
 		});
 	};
 

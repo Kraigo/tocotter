@@ -83,7 +83,7 @@ app.get('/auth', function (req, res) {
 
 	twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
 
-		if (error) return res.send("Error getting OAuth request token: " + JSON.stringify(error));
+		if (error) return res.send("Error getting OAuth request token: " + error);
 		
 		var expires= new Date();		
 		expires.setHours(expires.getHours() + 1);		
@@ -95,7 +95,7 @@ app.get('/auth', function (req, res) {
 			requestTokenSecret: requestTokenSecret,
 			expirationDate: expires
 		}, function(err, doc) {
-			if (err) return res.send("Error insert request token: " + JSON.stringify(err));
+			if (err) return res.send("Error insert request token: " + err);
 
 			res.redirect(twitter.getAuthUrl(requestToken));
 		});
@@ -110,11 +110,11 @@ app.get('/callback', function (req, res) {
 
 	db.findOne({requestToken: req.cookies.requestToken}, function(err, auth) {
 
-		if (err) return res.send("Error find request token: " + JSON.stringify(err));
+		if (err) return res.send("Error find request token: " + err);
 
 		twitter.getAccessToken(auth.requestToken, auth.requestTokenSecret, req.query.oauth_verifier, function(error, accessToken, accessTokenSecret, results) {
 		
-			if (error) return res.send("Error get access token: " + JSON.stringify(error));
+			if (error) return res.send("Error get access token: " + error);
 
 			var expires = new Date();		
 			expires.setFullYear(expires.getFullYear() + 10);		
@@ -147,6 +147,8 @@ app.get('/callback', function (req, res) {
 
 app.use(function(req, res, next) {
 
+	// Authentication
+
 	if (!req.cookies.accessToken) return res.redirect('/auth');
 
 	db.findOne({accessToken: req.cookies.accessToken}, function(err, auth) {
@@ -154,6 +156,23 @@ app.use(function(req, res, next) {
 		if (!auth) return res.redirect('/auth');
 
 		req.auth = auth;
+		next();
+	});
+});
+
+
+app.use(function(req, res, next) {
+
+	// Set user ID
+
+	if (req.cookies.uid) return next();
+
+	twitter.verifyCredentials(req.auth.accessToken, req.auth.accessTokenSecret, function(error, data, response) {
+		var expires = new Date();
+		expires.setFullYear(expires.getFullYear() + 10);
+
+		res.cookie('uid', data.id_str, {expires: expires, httpOnly: false, domain: req.hostname});
+
 		next();
 	});
 });

@@ -1,9 +1,9 @@
 "use strict";
 
-app.service('user', function($q, twitter){
+app.service('user', function($q, $cookies, twitter){
 	var self = this;
 	self.data = null;
-	twitter.getUserShow({user_id: 571038694}).then(function(res) {
+	twitter.getUserShow({user_id: $cookies.get('uid')}).then(function(res) {
 		self.data = res;
 
 		var toNext = 1000 - res.statuses_count % 1000;
