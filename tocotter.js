@@ -123,21 +123,14 @@ app.get('/callback', function (req, res) {
 
 			res.cookie('accessToken', accessToken, {expires: expires, httpOnly: false, domain: req.hostname});
 
-			var dbupdate = {
-				$set: {
-					accessToken: accessToken,
-					accessTokenSecret: accessTokenSecret
-				},
-				$unset: {
-					expirationDate: true
-				}
-			};
+			db.insert({
+				accessToken: accessToken,
+				accessTokenSecret: accessTokenSecret
+			}, function(err, doc) {
+				if (err) return res.send("Error insert access token: " + err);
 
-			db.update({ requestToken: req.cookies.requestToken }, dbupdate, {},
-				function () {
-					res.redirect('/');
-				}
-			);
+				res.redirect('/');
+			});
 			
 
 		})
