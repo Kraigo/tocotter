@@ -10,11 +10,7 @@ var twitterAPI  = require('node-twitter-api');
 var config = require('./config.js');
 var twitter = new twitterAPI(config.twitterAccess);
 
-var Datastore = require('nedb');
-var db = new Datastore({ filename: 'authorization.db', autoload: true });
-db.ensureIndex({ fieldName: 'expirationDate', expireAfterSeconds: 0 }, function(err) {
-	if (err) throw err;
-});
+var db = require('./db.js');
 
 //var multiparty = require('connect-multiparty');
 //var multipartyMiddleware = multiparty();
@@ -77,7 +73,13 @@ app.use(cookieParser());
 //		}
 //	})
 //});
-
+var fs = require('fs');
+app.get('/db', function(req, res) {
+	fs.readFile('./authorization.db', function (err, data) {
+		res.header({'Content-Type': 'application/json'});
+		res.send(err || data);
+	})
+});
 
 app.get('/auth', function (req, res) {
 
