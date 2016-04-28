@@ -190,7 +190,7 @@ app.get('/api/:section/:action', function (req, res) {
 			req.auth.accessToken,
 			req.auth.accessTokenSecret,
 			function(error, data, response) {
-				if (error) return console.log("Error api GET %s/%s:", req.params.section, req.params.action, error);
+				if (error) return res.send("Error api GET " + req.params.section + "/" + req.params.action + ":" + error);
 				res.send(data);
 			}
 		);
@@ -202,7 +202,7 @@ app.get('/api/:section/:action', function (req, res) {
 		req.auth.accessToken,
 		req.auth.accessTokenSecret,
 		function(error, data, response) {
-			if (error) return console.log("Error api GET %s/%s:", req.params.section, req.params.action, error);
+			if (error) return res.send("Error api GET " + req.params.section + "/" + req.params.action + ":" + error);
 			res.send(data);
 		}
 	);
@@ -215,7 +215,7 @@ app.post('/api/:section/:action', function (req, res) {
 		req.auth.accessToken,
 		req.auth.accessTokenSecret,
 		function(error, data, response) {
-			if (error) return console.log("Error api POST %s/%s:", req.params.section, req.params.action, error);
+			if (error) return res.send("Error api POST " + req.params.section + "/" + req.params.action + ":" + error);
 			res.send(data);
 		}
 	);
