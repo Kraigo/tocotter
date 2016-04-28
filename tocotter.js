@@ -123,15 +123,21 @@ app.get('/callback', function (req, res) {
 
 			res.cookie('accessToken', accessToken, {expires: expires, httpOnly: false, domain: req.hostname});
 
-			db.insert({
-				accessToken: accessToken,
-				accessTokenSecret: accessTokenSecret
-			}, function(err, doc) {
-				if (err) return res.send("Error insert access token: " + err);
+			var dbupdate = {
+				$set: {
+					accessToken: accessToken,
+					accessTokenSecret: accessTokenSecret
+				},
+				$unset: {
+					expirationDate: true
+				}
+			};
 
-				res.redirect('/');
-			});
-			
+			db.update({ requestToken: req.cookies.requestToken }, dbupdate, {},
+				function () {
+					res.redirect('/');
+				}
+			);
 
 		})
 
@@ -177,6 +183,19 @@ app.use(express.static('public'));
 
 
 app.get('/api/:section/:action', function (req, res) {
+
+	if (req.params.section === 'search') {
+		 return twitter[req.params.section](
+			req.query,
+			req.auth.accessToken,
+			req.auth.accessTokenSecret,
+			function(error, data, response) {
+				if (error) return console.log("Error api GET %s/%s:", req.params.section, req.params.action, error);
+				res.send(data);
+			}
+		);
+	}
+
 	twitter[req.params.section](
 		req.params.action,
 		req.query,
@@ -187,8 +206,8 @@ app.get('/api/:section/:action', function (req, res) {
 			res.send(data);
 		}
 	);
-
 });
+
 app.post('/api/:section/:action', function (req, res) {
 	twitter[req.params.section](
 		req.params.action,
@@ -201,6 +220,21 @@ app.post('/api/:section/:action', function (req, res) {
 		}
 	);
 
+});
+
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.send({
+    message: err.message,
+    error: err
+  });
 });
 
 var server = app.listen(app.get('port'), function () {
