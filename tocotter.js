@@ -10,7 +10,7 @@ var twitterAPI  = require('node-twitter-api');
 var config = require('./config.js');
 var twitter = new twitterAPI(config.twitterAccess);
 
-var db = require('./db.js');
+var Tokens = require('./tokens.js');
 
 //var multiparty = require('connect-multiparty');
 //var multipartyMiddleware = multiparty();
@@ -73,11 +73,10 @@ app.use(cookieParser());
 //		}
 //	})
 //});
-var fs = require('fs');
+
 app.get('/db', function(req, res) {
-	fs.readFile('./authorization.db', function (err, data) {
-		res.header({'Content-Type': 'application/json'});
-		res.send(err || data);
+	Tokens.findAll().then(function(tokens) {
+		res.send(tokens);
 	})
 });
 
@@ -85,24 +84,19 @@ app.get('/auth', function (req, res) {
 
 	twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
 
-		if (error) return res.send("Error getting OAuth request token: " + error);
+		if (error) return res.send("Error getting OAuth request token: " + JSON.stringify(error));
 		
 		var expires= new Date();		
 		expires.setHours(expires.getHours() + 1);		
 
 		res.cookie('requestToken', requestToken, {expires: expires, httpOnly: false, domain: req.hostname});
 
-		db.insert({
+		Tokens.create({
 			requestToken: requestToken,
-			requestTokenSecret: requestTokenSecret,
-			expirationDate: expires
-		}, function(err, doc) {
-			if (err) return res.send("Error insert request token: " + err);
-
+			requestTokenSecret: requestTokenSecret
+		}).then(function() {
 			res.redirect(twitter.getAuthUrl(requestToken));
 		});
-
-		
 
 	})
 
@@ -110,34 +104,30 @@ app.get('/auth', function (req, res) {
 
 app.get('/callback', function (req, res) {
 
-	db.findOne({requestToken: req.cookies.requestToken}, function(err, auth) {
+	Tokens.findOne({where:{requestToken: req.cookies.requestToken}}).then(function(token) {
 
-		if (err) return res.send("Error find request token: " + err);
+		if (!token) return res.send("Error find request token");
+
+		var auth = token.dataValues;
 
 		twitter.getAccessToken(auth.requestToken, auth.requestTokenSecret, req.query.oauth_verifier, function(error, accessToken, accessTokenSecret, results) {
 		
-			if (error) return res.send("Error get access token: " + error);
+			if (error) return res.send("Error get access token: " + JSON.stringify(error));
 
 			var expires = new Date();		
 			expires.setFullYear(expires.getFullYear() + 10);		
 
 			res.cookie('accessToken', accessToken, {expires: expires, httpOnly: false, domain: req.hostname});
 
-			var dbupdate = {
-				$set: {
-					accessToken: accessToken,
-					accessTokenSecret: accessTokenSecret
-				},
-				$unset: {
-					expirationDate: true
-				}
-			};
-
-			db.update({ requestToken: req.cookies.requestToken }, dbupdate, {},
-				function () {
+			Tokens.findOne({where: { requestToken: req.cookies.requestToken }})
+				.then(function(token) {
+					return token.update({
+						accessToken: accessToken,
+						accessTokenSecret: accessTokenSecret
+					})
+				}).then(function(token) {
 					res.redirect('/');
-				}
-			);
+				});
 
 		})
 
@@ -152,9 +142,11 @@ app.use(function(req, res, next) {
 
 	if (!req.cookies.accessToken) return res.redirect('/auth');
 
-	db.findOne({accessToken: req.cookies.accessToken}, function(err, auth) {
+	Tokens.findOne({where: {accessToken: req.cookies.accessToken}}).then(function(token) {
 
-		if (!auth) return res.redirect('/auth');
+		if (!token) return res.redirect('/auth');
+
+		var auth = token.dataValues;
 
 		req.auth = auth;
 		next();
@@ -190,7 +182,7 @@ app.get('/api/:section/:action', function (req, res) {
 			req.auth.accessToken,
 			req.auth.accessTokenSecret,
 			function(error, data, response) {
-				if (error) return res.send("Error api GET " + req.params.section + "/" + req.params.action + ":" + error);
+				if (error) return res.send("Error api GET " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
 				res.send(data);
 			}
 		);
@@ -202,7 +194,7 @@ app.get('/api/:section/:action', function (req, res) {
 		req.auth.accessToken,
 		req.auth.accessTokenSecret,
 		function(error, data, response) {
-			if (error) return res.send("Error api GET " + req.params.section + "/" + req.params.action + ":" + error);
+			if (error) return res.send("Error api GET " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
 			res.send(data);
 		}
 	);
@@ -215,7 +207,7 @@ app.post('/api/:section/:action', function (req, res) {
 		req.auth.accessToken,
 		req.auth.accessTokenSecret,
 		function(error, data, response) {
-			if (error) return res.send("Error api POST " + req.params.section + "/" + req.params.action + ":" + error);
+			if (error) return res.send("Error api POST " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
 			res.send(data);
 		}
 	);
@@ -239,6 +231,5 @@ app.use(function(err, req, res, next) {
 
 var server = app.listen(app.get('port'), function () {
 	console.log('Tocotter listening :%s', app.get('port'));
-	// open('http://localhost:8080');
 });
 
