@@ -1,6 +1,7 @@
 var Sequelize = require('sequelize');
+var config = ('./config');
 
-var sequelize = new Sequelize(process.env.DATABASE_URL || "DATABASE_URL", {
+var sequelize = new Sequelize(config.databaseUrl, {
     logging: false,
     dialectOptions: {
         ssl: true

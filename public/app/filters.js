@@ -32,6 +32,8 @@ app.filter('entities', function($sce) {
 		
 		var result = tweet.text;
 
+		if (!tweet.entities) return;
+
 		if (tweet.entities.hashtags && tweet.entities.hashtags.length > 0) {
 			angular.forEach(tweet.entities.hashtags, function(hashtag) {
 				result = result.replace('#'+hashtag.text, '<a href="#">#'+hashtag.text+'</a>');
