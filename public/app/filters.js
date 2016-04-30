@@ -64,9 +64,22 @@ app.filter('entities', function($sce) {
 
 
 app.filter('video', function() {
-	return function(input) {
-		var reg = /tweet_video_thumb\/(.*?)\.jpg/i;
-		input = input.replace(reg, 'tweet_video/$1.mp4');
-		return input;
+	return function(media) {
+
+		switch (media.type) {
+
+			case 'animated_gif':
+				var reg = /tweet_video_thumb\/(.*?)\.jpg/i;
+				return media.media_ur.replace(reg, 'tweet_video/$1.mp4');
+
+			case 'video':
+				return media.video_info.variants
+					.filter(function(a) {return a.content_type === 'video/mp4'})
+					.sort(function(a,b) {return a.bitrate - b.bitrate})
+					[0];
+
+			default:
+				return '';
+		}
 	}
 });

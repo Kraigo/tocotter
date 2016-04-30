@@ -28,12 +28,8 @@
 			<div ng-repeat="media in tweet.extended_entities.media" class="tweet-media-item">
 				<img ng-src="{{media.media_url}}" ng-if="media.type === 'photo'">
 
-				<video ng-if="media.type === 'animated_gif'" controls loop >
-					<source vsrc="{{media.media_url | video}}" type="video/mp4">
-				</video>
-
-				<video ng-if="media.type === 'video'" controls loop >
-					<source vsrc="{{(media.video_info.variants | filter: {'content_type': 'video/mp4'})[0].url}}" type="video/mp4">
+				<video ng-if="media.type === 'animated_gif' || media.type === 'video'" controls loop >
+					<source vsrc="{{media | video}}" type="video/mp4">
 				</video>
 			</div>
 		</div>
@@ -59,7 +55,7 @@
 					<img ng-src="{{media.media_url}}" ng-if="media.type === 'photo'">
 
 					<video ng-if="media.type === 'video'" controls loop >
-						<source vsrc="{{media.media_url | video}}" type="video/mp4">
+						<source vsrc="{{media | video}}" type="video/mp4">
 					</video>
 
 				</div>
