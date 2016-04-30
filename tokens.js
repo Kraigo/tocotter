@@ -1,6 +1,5 @@
 var Sequelize = require('sequelize');
-var config = ('./config');
-
+var config = require('./config');
 var sequelize = new Sequelize(config.databaseUrl, {
     logging: false,
     dialectOptions: {
