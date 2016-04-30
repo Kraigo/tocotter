@@ -70,13 +70,13 @@ app.filter('video', function() {
 
 			case 'animated_gif':
 				var reg = /tweet_video_thumb\/(.*?)\.jpg/i;
-				return media.media_ur.replace(reg, 'tweet_video/$1.mp4');
+				return media.media_url.replace(reg, 'tweet_video/$1.mp4');
 
 			case 'video':
 				return media.video_info.variants
 					.filter(function(a) {return a.content_type === 'video/mp4'})
 					.sort(function(a,b) {return a.bitrate - b.bitrate})
-					[0];
+					[0].url;
 
 			default:
 				return '';

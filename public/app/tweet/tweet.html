@@ -4,7 +4,7 @@
 	</div>
 
 	<div class="tweet-content">
-		<a href="https://twitter.com/{{tweet.user.screen_name}}/status/{{tweet.id_str}}" class="tweet-time" ng-bind="tweet.retweeted_status.created_at || tweet.created_at | fromNow" target="_blank"></a>
+		<a href="https://twitter.com/{{tweet.user.screen_name}}/status/{{tweet.id_str}}" class="tweet-time" ng-bind="(tweet.retweeted_status.created_at || tweet.created_at) | fromNow" target="_blank"></a>
 
 		<!-- <div class="tweet-type" ng-if="tweet.extended_entities"><span class="icon-landscape"></span></div> -->
 		<div class="tweet-control">
@@ -39,13 +39,19 @@
 			<div ng-repeat="media in tweet.entities.urls" class="tweet-media-item">
 				<tct-media src="media.expanded_url"></tct-media>
 
-				<!--<video ng-if="media.type === 'animated_gif'" controls loop >-->
-					<!--<source vsrc="{{media.expanded_url}}" type="video/mp4">-->
-				<!--</video>-->
+				<video ng-if="media.type === 'animated_gif' || media.type === 'video'" controls loop >
+					<source vsrc="{{media | video}}" type="video/mp4">
+				</video>
 			</div>
 		</div>
 
+		<!-- Quote -->
 		<div class="tweet-quote" ng-show="tweet.quoted_status" short-click="$parent.timeline.addDetail(tweet.quoted_status)">
+
+			<h6 class="tweet-title">
+				<span class="tweet-title-name" ng-bind="tweet.user.name"></span>
+				<span class="tweet-title-nick" ng-bind="'@'+tweet.user.screen_name"></span>
+			</h6>
 
 			<p class="tweet-text" ng-bind-html="tweet.quoted_status | entities"></p>
 
@@ -54,7 +60,7 @@
 				<div ng-repeat="media in tweet.quoted_status.extended_entities.media">
 					<img ng-src="{{media.media_url}}" ng-if="media.type === 'photo'">
 
-					<video ng-if="media.type === 'video'" controls loop >
+					<video ng-if="media.type === 'animated_gif' || media.type === 'video'" controls loop >
 						<source vsrc="{{media | video}}" type="video/mp4">
 					</video>
 
