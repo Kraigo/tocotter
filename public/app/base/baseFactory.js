@@ -38,7 +38,6 @@ app.factory('base', function($http, $q, CONFIG, Upload){
                     deferred.resolve(result);
                 })
                 .error(function (err, status) {
-                    console.log(err, status)
                     self.showError(err, status);
                     deferred.reject();
                 });
