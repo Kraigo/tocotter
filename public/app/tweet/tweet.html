@@ -13,59 +13,29 @@
 			<span class="tweet-control-item icon-star" ng-click="favorite(tweet)" ng-class="{'favorited': tweet.favorited}"></span>
 		</div>
 
-		<div class="tweet-retweeted" ng-if="tweet.retweeted_status"><span class="icon-retweet"></span> Retweeted by <a tct-action-user="{{id_str}}" ng-bind="tweet.user.name"></a></div>
-		
-		<h6 class="tweet-title">
-			<span class="tweet-title-name" ng-bind="tweet.retweeted_status.user.name || tweet.user.name"></span>
-			<span class="tweet-title-nick" ng-bind="'@'+(tweet.retweeted_status.user.screen_name || tweet.user.screen_name)"></span>
-		</h6>
-
-		<p class="tweet-text" ng-bind-html="tweet.retweeted_status || tweet | entities" short-click="$parent.timeline.addDetail(tweet)"></p>
-
-
-		<!-- Media -->
-		<div class="tweet-media" ng-if="tweet.extended_entities.media" ng-class="{'more-media': tweet.extended_entities.media.length > 1 && !showMoreMedia }" ng-click="showMoreMedia = true">
-			<div ng-repeat="media in tweet.extended_entities.media" class="tweet-media-item">
-				<img ng-src="{{media.media_url}}" ng-if="media.type === 'photo'">
-
-				<video ng-if="media.type === 'animated_gif' || media.type === 'video'" controls loop >
-					<source vsrc="{{media | video}}" type="video/mp4">
-				</video>
-			</div>
+		<div ng-init="status = tweet.retweeted_status || tweet"
+			 short-click="$parent.timeline.addDetail(status)"
+			 ng-include="'app/tweet/tweetContent.html'">
 		</div>
+
 
 		<!-- External Media -->
-		<div class="tweet-media" ng-if="tweet.entities.urls" ng-class="{'more-media': tweet.entities.media.length > 1 && !showMoreMedia }" ng-click="showMoreMedia = true">
-			<div ng-repeat="media in tweet.entities.urls" class="tweet-media-item">
-				<tct-media src="media.expanded_url"></tct-media>
+		<!--<div class="tweet-media" ng-if="tweet.entities.urls" ng-class="{'more-media': tweet.entities.media.length > 1 && !showMoreMedia }" ng-click="showMoreMedia = true">-->
+			<!--<div ng-repeat="media in tweet.entities.urls" class="tweet-media-item">-->
+				<!--<tct-media src="media.expanded_url"></tct-media>-->
 
-				<video ng-if="media.type === 'animated_gif' || media.type === 'video'" controls loop >
-					<source vsrc="{{media | video}}" type="video/mp4">
-				</video>
-			</div>
-		</div>
+				<!--<video ng-if="media.type === 'animated_gif' || media.type === 'video'" controls loop >-->
+					<!--<source vsrc="{{media | video}}" type="video/mp4">-->
+				<!--</video>-->
+			<!--</div>-->
+		<!--</div>-->
 
 		<!-- Quote -->
-		<div class="tweet-quote" ng-show="tweet.quoted_status" short-click="$parent.timeline.addDetail(tweet.quoted_status)">
-
-			<h6 class="tweet-title">
-				<span class="tweet-title-name" ng-bind="tweet.user.name"></span>
-				<span class="tweet-title-nick" ng-bind="'@'+tweet.user.screen_name"></span>
-			</h6>
-
-			<p class="tweet-text" ng-bind-html="tweet.quoted_status | entities"></p>
-
-
-			<div class="tweet-media" ng-if="tweet.quoted_status.extended_entities" ng-class="{'more-media': tweet.quoted_status.extended_entities.media.length > 1 && !showMoreMedia }" ng-click="showMoreMedia = true">
-				<div ng-repeat="media in tweet.quoted_status.extended_entities.media">
-					<img ng-src="{{media.media_url}}" ng-if="media.type === 'photo'">
-
-					<video ng-if="media.type === 'animated_gif' || media.type === 'video'" controls loop >
-						<source vsrc="{{media | video}}" type="video/mp4">
-					</video>
-
-				</div>
-			</div>
+		<div class="tweet-quote"
+			 ng-init="status = tweet.quoted_status || tweet.retweeted_status.quoted_status"
+			 short-click="$parent.timeline.addDetail(status)"
+			 ng-if="tweet.quoted_status || tweet.retweeted_status.quoted_status"
+			 ng-include="'app/tweet/tweetContent.html'">
 		</div>
 
 

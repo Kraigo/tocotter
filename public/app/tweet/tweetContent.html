@@ -1,0 +1,20 @@
+<div class="tweet-retweeted" ng-if="tweet.retweeted_status">
+    <span class="icon-retweet"></span> Retweeted by <a tct-action-user="{{id_str}}" ng-bind="tweet.user.name"></a>
+</div>
+
+<h6 class="tweet-title">
+    <span class="tweet-title-name" ng-bind="status.user.name"></span>
+    <span class="tweet-title-nick" ng-bind="'@'+status.user.screen_name"></span>
+</h6>
+
+<p class="tweet-text" ng-bind-html="status | entities"></p>
+
+<div class="tweet-media" ng-class="{'more-media': tweet.extended_entities.media.length > 1 && !showMoreMedia }" ng-click="showMoreMedia = true">
+    <div ng-repeat="media in tweet.extended_entities.media" class="tweet-media-item">
+        <img ng-src="{{media.media_url}}" ng-if="media.type === 'photo'">
+
+        <video ng-if="media.type === 'animated_gif' || media.type === 'video'" controls loop >
+            <source vsrc="{{media | video}}" type="video/mp4">
+        </video>
+    </div>
+</div>
