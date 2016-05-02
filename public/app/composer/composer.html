@@ -25,10 +25,10 @@
 
 		<ul ng-show="composer.isActive">
 			<li class="control disabled"><span class="icon-location"></span></li>
-			<li class="control primary disabled">
+			<li class="control primary">
 				<label>
 					<span class="icon-photo"></span>
-					<input type="file" style="display: none;" tct-file-read="uploadMedia" ng-disabled="true">
+					<input type="file" style="display: none;" tct-file-read="uploadMedia">
 					<label>
 			</li>
 			<li class="control primary" ng-click="updateStatus()" ng-class="{disabled: composer.text.length == 0}">

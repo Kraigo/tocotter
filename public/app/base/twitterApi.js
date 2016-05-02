@@ -31,7 +31,7 @@ app.service('twitter', function(base){
 		},
 
 		getConversation: function(username, tweetId) {
-			return base.get('/search/tweets', {q: "@"+username, count: 100, since_id: tweetId});
+			return base.get('/search', {q: "@"+username, count: 100, since_id: tweetId});
 		},
 
 		postUpdateStatus: function(data) {
@@ -46,7 +46,7 @@ app.service('twitter', function(base){
 		},
 
 		postMediaUpload: function(data) {
-			return base.file('/media/upload', data);
+			return base.file('/upload', data);
 		}
 	}
 });

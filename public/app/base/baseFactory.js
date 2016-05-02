@@ -21,7 +21,9 @@ app.factory('base', function($http, $q, CONFIG, Upload){
         file: function(url, data) {
             return Upload.upload({
                 url: CONFIG.baseUrl + url,
-                data: data
+                data: {
+                    media: data
+                }
             });
         },
 

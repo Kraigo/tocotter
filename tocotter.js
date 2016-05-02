@@ -173,12 +173,9 @@ app.use(function(req, res, next) {
 
 app.use(express.static('public'));
 
-
-app.get('/api/:section/:action', function (req, res) {
-
-	if (req.params.section === 'search') {
-		 return twitter[req.params.section](
-			req.query,
+app.get('/api/search', function (req, res) {
+		return twitter.search(
+		req.query,
 			req.auth.accessToken,
 			req.auth.accessTokenSecret,
 			function(error, data, response) {
@@ -186,7 +183,9 @@ app.get('/api/:section/:action', function (req, res) {
 				res.send(data);
 			}
 		);
-	}
+});
+
+app.get('/api/:section/:action', function (req, res) {
 
 	twitter[req.params.section](
 		req.params.action,
@@ -200,19 +199,34 @@ app.get('/api/:section/:action', function (req, res) {
 	);
 });
 
-app.post('/api/:section/:action', function (req, res) {
-	twitter[req.params.section](
-		req.params.action,
-		req.body,
+app.post('/api/upload', function (req, res) {
+	console.log(req.query);
+	console.log('=== body ===')
+	console.log(req.body);
+	return twitter.uploadMedia(
+		req.query,
 		req.auth.accessToken,
 		req.auth.accessTokenSecret,
 		function(error, data, response) {
-			if (error) return res.status(error.statusCode).send("Error api POST " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
+			if (error) return res.status(error.statusCode).send("Error api GET " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
 			res.send(data);
 		}
 	);
-
 });
+
+//app.post('/api/:section/:action', function (req, res) {
+//	twitter[req.params.section](
+//		req.params.action,
+//		req.body,
+//		req.auth.accessToken,
+//		req.auth.accessTokenSecret,
+//		function(error, data, response) {
+//			if (error) return res.status(error.statusCode).send("Error api POST " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
+//			res.send(data);
+//		}
+//	);
+//
+//});
 
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
