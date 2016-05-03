@@ -9,7 +9,7 @@ app.directive("tctFileRead", function () {
 				var reader = new FileReader();
 				reader.onload = function (loadEvent) {
 					scope.$apply(function () {
-						scope.tctFileRead(loadEvent.target.result);
+						scope.tctFileRead(loadEvent.target.result.split(',')[1]);
 					});
 				};
 				reader.readAsDataURL(changeEvent.target.files[0]);
@@ -56,7 +56,7 @@ app.directive("shortClick", function(){
 					scope.time= Date.now();
 				}
 
-				if(e.type == "mouseup" && e.button === 0 && e.target == this){
+				if(e.type == "mouseup" && e.button === 0 && e.target.nodeName !== 'BUTTON' && e.target.nodeName !== 'A'){
 					if(Date.now() - scope.time > 200){
 						return false;
 					} else {

@@ -5,6 +5,7 @@
 		<h3 class="composer-title">
 			Сompose tweet {{test}}
 			<span class="composer-count" ng-if="composer.text.length > 0">{{140 - composer.text.length}}</span>
+			<span class="composer-count" ng-if="composer.media.length"><i class="icon-photo"></i> {{composer.media.length}}</span>
 		</h3>
 
 		<div class="composer-reply" ng-if="composer.reply">
@@ -31,7 +32,7 @@
 					<input type="file" style="display: none;" tct-file-read="uploadMedia">
 					<label>
 			</li>
-			<li class="control primary" ng-click="updateStatus()" ng-class="{disabled: composer.text.length == 0}">
+			<li class="control primary" ng-click="updateStatus()" ng-class="{disabled: !composer.text.length && !composer.media.length}">
 				<span class="icon-right"></span>
 			</li>
 		</ul>

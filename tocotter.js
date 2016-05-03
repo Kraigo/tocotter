@@ -12,8 +12,8 @@ var twitter = new twitterAPI(config.twitterAccess);
 
 var Tokens = require('./tokens.js');
 
-//var multiparty = require('connect-multiparty');
-//var multipartyMiddleware = multiparty();
+var multiparty = require('connect-multiparty');
+var multipartyMiddleware = multiparty();
 
 var app = express();
 app.set('port', (process.env.PORT || 8080));
@@ -173,8 +173,10 @@ app.use(function(req, res, next) {
 
 app.use(express.static('public'));
 
+
 app.get('/api/search', function (req, res) {
-		return twitter.search(
+
+	return twitter.search(
 		req.query,
 			req.auth.accessToken,
 			req.auth.accessTokenSecret,
@@ -182,8 +184,10 @@ app.get('/api/search', function (req, res) {
 				if (error) return res.status(error.statusCode).send("Error api GET " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
 				res.send(data);
 			}
-		);
+	);
+
 });
+
 
 app.get('/api/:section/:action', function (req, res) {
 
@@ -197,14 +201,17 @@ app.get('/api/:section/:action', function (req, res) {
 			res.send(data);
 		}
 	);
+
 });
 
-app.post('/api/upload', function (req, res) {
-	console.log(req.query);
-	console.log('=== body ===')
-	console.log(req.body);
+
+app.post('/api/upload', multipartyMiddleware, function (req, res) {
+
 	return twitter.uploadMedia(
-		req.query,
+		{
+			media: req.body.media,
+			isBase64: true
+		},
 		req.auth.accessToken,
 		req.auth.accessTokenSecret,
 		function(error, data, response) {
@@ -212,21 +219,25 @@ app.post('/api/upload', function (req, res) {
 			res.send(data);
 		}
 	);
+
 });
 
-//app.post('/api/:section/:action', function (req, res) {
-//	twitter[req.params.section](
-//		req.params.action,
-//		req.body,
-//		req.auth.accessToken,
-//		req.auth.accessTokenSecret,
-//		function(error, data, response) {
-//			if (error) return res.status(error.statusCode).send("Error api POST " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
-//			res.send(data);
-//		}
-//	);
-//
-//});
+
+app.post('/api/:section/:action', function (req, res) {
+
+	twitter[req.params.section](
+		req.params.action,
+		req.body,
+		req.auth.accessToken,
+		req.auth.accessTokenSecret,
+		function(error, data, response) {
+			if (error) return res.status(error.statusCode).send("Error api POST " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
+			res.send(data);
+		}
+	);
+
+});
+
 
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

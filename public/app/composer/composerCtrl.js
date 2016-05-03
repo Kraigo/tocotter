@@ -18,7 +18,8 @@ app.controller('ComposerCtrl', function($scope, twitter, composer, timeline){
 		var params = {status: composer.text};
 
 		if (composer.reply) params.in_reply_to_status_id = composer.reply.id_str;
-		if (composer.media[0]) params.media_ids = composer.media;
+
+		if (composer.media.length) params.media_ids = composer.media;
 
 		$scope.uploading = true;
 		twitter.postUpdateStatus(params).then(function(res) {

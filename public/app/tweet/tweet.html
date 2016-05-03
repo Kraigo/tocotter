@@ -1,4 +1,7 @@
-<div class="tweet-container" id="tweet-{{tweet.id_str}}">
+<div class="tweet-container"
+	 id="tweet-{{tweet.id_str}}"
+	 short-click="$parent.timeline.addDetail(status)">
+
 	<div class="tweet-sidebar" ng-click="scrollToId(tweet.id_str)">
 		<span class="tweet-ava" ng-style="{'background-image': 'url({{tweet.retweeted_status.user.profile_image_url || tweet.user.profile_image_url}})'}"></span>
 	</div>
@@ -8,13 +11,12 @@
 
 		<!-- <div class="tweet-type" ng-if="tweet.extended_entities"><span class="icon-landscape"></span></div> -->
 		<div class="tweet-control">
-			<span class="tweet-control-item icon-reply" ng-click="reply(tweet)"></span>
-			<span class="tweet-control-item icon-retweet" ng-click="retweet(tweet)" ng-class="{'retweeted': tweet.retweeted}"></span>
-			<span class="tweet-control-item icon-star" ng-click="favorite(tweet)" ng-class="{'favorited': tweet.favorited}"></span>
+			<button class="tweet-control-item icon-reply" ng-click="reply(tweet)"></button>
+			<button class="tweet-control-item icon-retweet" ng-click="retweet(tweet)" ng-class="{'retweeted': tweet.retweeted}"></button>
+			<button class="tweet-control-item icon-star" ng-click="favorite(tweet)" ng-class="{'favorited': tweet.favorited}"></button>
 		</div>
 
 		<div ng-init="status = tweet.retweeted_status || tweet"
-			 short-click="$parent.timeline.addDetail(status)"
 			 ng-include="'app/tweet/tweetContent.html'">
 		</div>
 
@@ -37,8 +39,6 @@
 			 ng-if="tweet.quoted_status || tweet.retweeted_status.quoted_status"
 			 ng-include="'app/tweet/tweetContent.html'">
 		</div>
-
-		<span short-click="$parent.timeline.addDetail(status)">Подробнее</span>
 	</div>
 
 </div>

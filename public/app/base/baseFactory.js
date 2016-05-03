@@ -1,15 +1,7 @@
 "use strict";
 
-app.factory('base', function($http, $q, CONFIG, Upload){
+app.factory('base', function($http, $q, CONFIG){
     return {
-        getHeaders: function (url) {
-            var header = {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*"
-            };
-            return header;
-        },
-
         get: function (url, data) {
             return this.request('GET', url, { params: data });
         },
@@ -18,22 +10,37 @@ app.factory('base', function($http, $q, CONFIG, Upload){
             return this.request('POST', url, { data: data });
         },
 
-        file: function(url, data) {
-            return Upload.upload({
-                url: CONFIG.baseUrl + url,
-                data: {
-                    media: data
-                }
+        file: function(url, file) {
+            var fd = new FormData();
+            fd.append('media', file);
+
+            return $http.post(CONFIG.baseUrl + url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            })
+            .success(function(){
+            })
+            .error(function(){
+
             });
         },
 
-        request: function (method, url, options) {
+        request: function (method, url, options, headers) {
             var deferred = $q.defer();
             var self = this;
 
             options.method = method;
             options.url = CONFIG.baseUrl + url;
-            options.headers = this.getHeaders(url);
+            options.headers = {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            };
+
+            if (headers) {
+                for(var h in headers) {
+                    options.headers[h] = headers[h];
+                }
+            }
 
             $http(options)
                 .success(function (result, status) {

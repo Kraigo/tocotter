@@ -45,8 +45,8 @@ app.service('twitter', function(base){
 			return base.post('/favorites/create', data);
 		},
 
-		postMediaUpload: function(data) {
-			return base.file('/upload', data);
+		postMediaUpload: function(file) {
+			return base.file('/upload', file);
 		}
 	}
 });
