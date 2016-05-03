@@ -21,7 +21,7 @@ app.filter('fromNow', function() {
 		// 	inputDate.setTime(Date.parse(input));
 		// return nowDate - inputDate;
 	}
-})
+});
 
 
 app.filter('entities', function($sce) {
@@ -31,6 +31,10 @@ app.filter('entities', function($sce) {
 		if (!tweet) return;
 		
 		var result = tweet.text;
+
+		if (tweet.text) {
+			result = tweet.text.replace("\n", "<br>");
+		}
 
 		if (!tweet.entities) return;
 

@@ -56,7 +56,7 @@ app.directive("shortClick", function(){
 					scope.time= Date.now();
 				}
 
-				if(e.type == "mouseup" && e.button === 0 && e.target.nodeName !== 'BUTTON' && e.target.nodeName !== 'A'){
+				if(e.type == "mouseup" && e.button === 0 && e.target.nodeName !== 'BUTTON' && e.target.nodeName !== 'A'&& e.target.nodeName !== 'IMG'){
 					if(Date.now() - scope.time > 200){
 						return false;
 					} else {

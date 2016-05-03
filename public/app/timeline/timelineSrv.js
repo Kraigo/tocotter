@@ -102,7 +102,6 @@ function Timeline(id, twitter) {
 
 Timeline.prototype = {
 	addDetail: function(tweet) {
-		console.log(tweet);
 		if (!tweet) { this.remove(); }
 
 		var self = this;
