@@ -25,7 +25,7 @@ app.controller('ComposerCtrl', function($scope, twitter, composer, timeline){
 		twitter.postUpdateStatus(params).then(function(res) {
 			$scope.uploading = false;
 			composer.emptyComposer();
-			timeline.loadTimeline(timeline.timelines);
+			//timeline.loadTimeline(timeline.timelines);
 		});
 	};
 

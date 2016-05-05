@@ -1,6 +1,6 @@
 "use strict";
 
-app.controller('TocotterCtrl', function($scope, $interval, twitter, timeline, composer){
+app.controller('TocotterCtrl', function($scope, $interval, twitter, timeline, composer, stream){
 
 	$scope.showMenu = false;
 
@@ -10,12 +10,18 @@ app.controller('TocotterCtrl', function($scope, $interval, twitter, timeline, co
 	$scope.detail = timeline.detail;
 	$scope.composer = composer;
 
+	stream.onMessage(function(msg) {
+		msg = JSON.parse(msg.data);
+		if (msg.created_at) {
+			$scope.timelines[0].addTweet(msg);
+		}
+	});
 	
 	$scope.refresh = function() {
 		timeline.loadTimeline(timeline.timelines);
 	};
 
-	$interval($scope.refresh, 60000);
+	//$interval($scope.refresh, 60000);
 
 	$scope.uploadMedia = function(file) {
 		twitter.postMediaUpload(file).then(function(res) {

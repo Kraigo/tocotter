@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var request = require('request');
 var cheerio = require('cheerio');
+var WebSocketServer = require("ws").Server;
 
 var twitterAPI  = require('node-twitter-api');
 var config = require('./config.js');
@@ -258,3 +259,38 @@ var server = app.listen(app.get('port'), function () {
 	console.log('Tocotter listening :%s', app.get('port'));
 });
 
+var wss = new WebSocketServer({server: server});
+
+wss.on("connection", function(ws) {
+
+	var cookies = ws.upgradeReq.headers.cookie
+		.split(' ')
+		.reduce(function(result, current) {
+			var item = current.match(/(.*?)=(.*?);?$/);
+			result[item[1]] = item[2];
+			return result;
+		}, {});
+
+	Tokens.findOne({where: {accessToken: cookies.accessToken}}).then(function(token) {
+
+		if (!token) return;
+
+		twitter.getStream(
+			'user',
+			{},
+			token.accessToken,
+			token.accessTokenSecret,
+			function(err, data) {
+				ws.send(JSON.stringify(data), function() {
+
+				});
+			}, function() {
+
+			}
+		);
+	});
+
+	ws.on("close", function() {
+
+	})
+});

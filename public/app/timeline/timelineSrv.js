@@ -149,4 +149,4 @@ Timeline.prototype = {
 
 		return unique;
 	}
-}
+};
