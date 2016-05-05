@@ -281,11 +281,15 @@ wss.on("connection", function(ws) {
 			token.accessToken,
 			token.accessTokenSecret,
 			function(err, data) {
+				if (err) ws.send(JSON.stringify(err), function() {
+
+				});
+
 				ws.send(JSON.stringify(data), function() {
 
 				});
-			}, function() {
-
+			}, function(err) {
+				if (err) ws.send(err);
 			}
 		);
 	});

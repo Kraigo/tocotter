@@ -10,10 +10,17 @@ app.controller('TocotterCtrl', function($scope, $interval, twitter, timeline, co
 	$scope.detail = timeline.detail;
 	$scope.composer = composer;
 
+	var homeTimeline = $scope.timelines[0];
+
 	stream.onMessage(function(msg) {
 		msg = JSON.parse(msg.data);
-		if (msg.created_at) {
-			$scope.timelines[0].addTweet(msg);
+		if (msg.created_at && homeTimeline.isUnique(msg)) {
+			homeTimeline.addTweet(msg);
+			homeTimeline.data = homeTimeline.data.splice(0, 100);
+		}
+
+		if (msg.delete) {
+			homeTimeline.removeTweet(msg.delete.status);
 		}
 	});
 	

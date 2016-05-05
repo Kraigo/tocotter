@@ -137,6 +137,14 @@ Timeline.prototype = {
 	addTweet: function(elm) {
 		this.data.unshift(elm);
 	},
+	removeTweet: function(status) {
+		for (var i=0; i < this.data.length; i++) {
+			if (this.data[i].id_str === status.id_str) {
+				this.data.splice(i, 1);
+			}
+		}
+
+	},
 	isUnique: function(elm) {
 		
 		var unique = true;
