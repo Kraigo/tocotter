@@ -6,7 +6,9 @@ app.service('timeline', function($cookies, twitter, CONFIG) {
 	self.status = {
 		loading: [],
 		startLoading: function(item) {
-			this.loading.push(item);
+			if (this.loading.indexOf(item) < 0) {
+				this.loading.push(item);
+			}
 		},
 		endLoading: function(item) {
 			var index = this.loading.indexOf(item);
@@ -33,16 +35,8 @@ app.service('timeline', function($cookies, twitter, CONFIG) {
 
 		twitter.getTimeline(timeline.id, params).then(function(res) {
 
-			for (var i = res.length-1; i >= 0; i--) {
+			self.addTweets(timeline.id, res);
 
-				if (timeline.isUnique(res[i])) {
-					timeline.addTweet(res[i]);
-				}
-			}
-
-			timeline.data = timeline.data.splice(0,CONFIG.numSavedTwt);
-			self.saveToLocal(timeline);
-			self.status.endLoading(timeline.id);
 		});
 
 	};
@@ -82,6 +76,41 @@ app.service('timeline', function($cookies, twitter, CONFIG) {
 
 	};
 
+	self.addTweets = function(timelineId, tweets) {
+
+		tweets = Array.isArray(tweets) ? tweets : [tweets];
+
+		var timeline  = self.getTimelineById(timelineId);
+
+		for (var i = tweets.length-1; i >= 0; i--) {
+			timeline.addTweet(tweets[i]);
+		}
+
+		timeline.data = timeline.data.splice(0, CONFIG.numSavedTwt);
+		self.saveToLocal(timeline);
+		self.status.endLoading(timeline.id);
+	};
+
+	self.removeTweets = function(tweets) {
+
+		tweets = Array.isArray(tweets) ? tweets : [tweets];
+
+		for (var t = tweets.length -1; t >=0; t--) {
+			for (var i = self.timelines.length - 1; i >= 0; i--) {
+				self.timelines[i].removeTweet(tweets[t]);
+			}
+		}
+	};
+
+	self.getTimelineById = function(timelineId) {
+		for (var i = self.timelines.length - 1; i >= 0; i--) {
+			if (self.timelines[i].id === timelineId) {
+				return self.timelines[i];
+			}
+		}
+		return null;
+	};
+
 
 	var initTimelines = function() {
 		self.loadFromLocal(self.timelines);
@@ -98,7 +127,7 @@ function Timeline(id, twitter) {
 	this.detailData = [];
 	this.showDetail = false;
 	this.twitter = twitter;
-};
+}
 
 Timeline.prototype = {
 	addDetail: function(tweet) {
@@ -135,7 +164,9 @@ Timeline.prototype = {
 		}
 	},
 	addTweet: function(elm) {
-		this.data.unshift(elm);
+		if (this.isUnique(elm)) {
+			this.data.unshift(elm);
+		}
 	},
 	removeTweet: function(status) {
 		for (var i=0; i < this.data.length; i++) {

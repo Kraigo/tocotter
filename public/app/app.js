@@ -2,10 +2,8 @@
 
 var app = angular.module('tocotter', ['ngCookies', 'ngSocket']);
 
-app.run(function(stream) {
-    stream.onOpen(function() {
-        console.log('Stream User opened');
-    });
+app.run(function($http, $templateCache) {
+    $http.get('app/tweet/tweetContent.html', { cache: $templateCache });
 });
 
 

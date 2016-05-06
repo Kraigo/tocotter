@@ -3,7 +3,8 @@
 app.service('user', function($q, $cookies, twitter){
 	var self = this;
 	self.data = null;
-	twitter.getUserShow({user_id: $cookies.get('uid')}).then(function(res) {
+	self.uid = $cookies.get('uid');
+	twitter.getUserShow({user_id: self.uid}).then(function(res) {
 		self.data = res;
 
 		var toNext = 1000 - res.statuses_count % 1000;

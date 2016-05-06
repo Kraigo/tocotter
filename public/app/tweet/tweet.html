@@ -7,7 +7,7 @@
 	</div>
 
 	<div class="tweet-content">
-		<a href="https://twitter.com/{{tweet.user.screen_name}}/status/{{tweet.id_str}}" class="tweet-time" ng-bind="(tweet.retweeted_status.created_at || tweet.created_at) | fromNow" target="_blank"></a>
+		<a href="https://twitter.com/{{tweet.user.screen_name}}/status/{{tweet.id_str}}" class="tweet-time" ng-bind="tweet.created_at | fromNow" target="_blank"></a>
 
 		<!-- <div class="tweet-type" ng-if="tweet.extended_entities"><span class="icon-landscape"></span></div> -->
 		<div class="tweet-control">

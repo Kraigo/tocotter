@@ -1,5 +1,10 @@
 "use strict";
 
 app.service('stream', function(ngSocket){
-    return ngSocket('ws://' + window.location.host);
+    var stream = ngSocket('ws://' + window.location.host);
+    stream.onOpen(function() {
+        console.log('Stream User opened');
+    });
+    return stream;
+
 });
