@@ -76,14 +76,14 @@ app.service('timeline', function($cookies, twitter, CONFIG) {
 
 	};
 
-	self.addTweets = function(timelineId, tweets) {
+	self.addTweets = function(timelineId, tweets, replace) {
 
 		tweets = Array.isArray(tweets) ? tweets : [tweets];
 
 		var timeline  = self.getTimelineById(timelineId);
 
 		for (var i = tweets.length-1; i >= 0; i--) {
-			timeline.addTweet(tweets[i]);
+			timeline.addTweet(tweets[i], replace);
 		}
 
 		timeline.data = timeline.data.splice(0, CONFIG.numSavedTwt);
@@ -163,8 +163,11 @@ Timeline.prototype = {
 			})
 		}
 	},
-	addTweet: function(elm) {
+	addTweet: function(elm, replace) {
 		if (this.isUnique(elm)) {
+			this.data.unshift(elm);
+		} else if (replace) {
+			this.removeTweet(elm);
 			this.data.unshift(elm);
 		}
 	},

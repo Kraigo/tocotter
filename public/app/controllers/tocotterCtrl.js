@@ -13,7 +13,7 @@ app.controller('TocotterCtrl', function($scope, $interval, twitter, timeline, co
 	stream.onMessage(function(msg) {
 		msg = JSON.parse(msg.data);
 		if (msg.created_at) {
-			timeline.addTweets('home', msg);
+			timeline.addTweets('home', msg, true);
 		}
 
 		if (msg.user && msg.user.id_str === user.uid) {
