@@ -102,6 +102,16 @@ app.service('timeline', function($cookies, twitter, CONFIG) {
 		}
 	};
 
+	self.favoriteTweets = function(tweets, isMy) {
+		tweets = Array.isArray(tweets) ? tweets : [tweets];
+
+		for (var t = tweets.length -1; t >=0; t--) {
+			for (var i = self.timelines.length - 1; i >= 0; i--) {
+				self.timelines[i].favoriteTweet(tweets[t], isMy);
+			}
+		}
+	};
+
 	self.getTimelineById = function(timelineId) {
 		for (var i = self.timelines.length - 1; i >= 0; i--) {
 			if (self.timelines[i].id === timelineId) {
@@ -154,7 +164,7 @@ Timeline.prototype = {
 		this.detailData = [];
 		this.showDetail = false;
 	},
-	getRepliedTweet: function(tweet) {;
+	getRepliedTweet: function(tweet) {
 		var self = this;
 		if (tweet.in_reply_to_status_id_str) {				
 			this.twitter.getTweet(tweet.in_reply_to_status_id_str).then(function(res) {
@@ -177,7 +187,17 @@ Timeline.prototype = {
 				this.data.splice(i, 1);
 			}
 		}
+	},
+	favoriteTweet: function(status, isMy) {
+		for (var i=0; i < this.data.length; i++) {
+			if (this.data[i].id_str === status.id_str) {
+				this.data[i].favorited_count++;
 
+				if (isMy) {
+					this.data[i].favorited = true;
+				}
+			}
+		}
 	},
 	isUnique: function(elm) {
 		

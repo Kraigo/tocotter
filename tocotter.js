@@ -5,7 +5,6 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var request = require('request');
 var cheerio = require('cheerio');
-var WebSocketServer = require("ws").Server;
 
 var twitterAPI  = require('node-twitter-api');
 var config = require('./config.js');
@@ -13,10 +12,8 @@ var twitter = new twitterAPI(config.twitterAccess);
 
 var Tokens = require('./tokens.js');
 
-var multiparty = require('connect-multiparty');
-var multipartyMiddleware = multiparty();
-
 var app = express();
+
 app.set('port', (process.env.PORT || 8080));
 
 app.use(bodyParser());
@@ -86,9 +83,9 @@ app.get('/auth', function (req, res) {
 	twitter.getRequestToken(function(error, requestToken, requestTokenSecret, results){
 
 		if (error) return res.send("Error getting OAuth request token: " + JSON.stringify(error));
-		
-		var expires= new Date();		
-		expires.setHours(expires.getHours() + 1);		
+
+		var expires= new Date();
+		expires.setHours(expires.getHours() + 1);
 
 		res.cookie('requestToken', requestToken, {expires: expires, httpOnly: false, domain: req.hostname});
 
@@ -112,11 +109,11 @@ app.get('/callback', function (req, res) {
 		var auth = token.dataValues;
 
 		twitter.getAccessToken(auth.requestToken, auth.requestTokenSecret, req.query.oauth_verifier, function(error, accessToken, accessTokenSecret, results) {
-		
+
 			if (error) return res.send("Error get access token: " + JSON.stringify(error));
 
-			var expires = new Date();		
-			expires.setFullYear(expires.getFullYear() + 10);		
+			var expires = new Date();
+			expires.setFullYear(expires.getFullYear() + 10);
 
 			res.cookie('accessToken', accessToken, {expires: expires, httpOnly: false, domain: req.hostname});
 
@@ -133,7 +130,7 @@ app.get('/callback', function (req, res) {
 		})
 
 	});
-	
+
 });
 
 
@@ -174,70 +171,9 @@ app.use(function(req, res, next) {
 
 app.use(express.static('public'));
 
+app.use('/api', require('./routes/api'));
 
-app.get('/api/search', function (req, res) {
-
-	return twitter.search(
-		req.query,
-			req.auth.accessToken,
-			req.auth.accessTokenSecret,
-			function(error, data, response) {
-				if (error) return res.status(error.statusCode).send("Error api GET " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
-				res.send(data);
-			}
-	);
-
-});
-
-
-app.get('/api/:section/:action', function (req, res) {
-
-	twitter[req.params.section](
-		req.params.action,
-		req.query,
-		req.auth.accessToken,
-		req.auth.accessTokenSecret,
-		function(error, data, response) {
-			if (error) return res.status(error.statusCode).send("Error api GET " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
-			res.send(data);
-		}
-	);
-
-});
-
-
-app.post('/api/upload', multipartyMiddleware, function (req, res) {
-
-	return twitter.uploadMedia(
-		{
-			media: req.body.media,
-			isBase64: true
-		},
-		req.auth.accessToken,
-		req.auth.accessTokenSecret,
-		function(error, data, response) {
-			if (error) return res.status(error.statusCode).send("Error api GET " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
-			res.send(data);
-		}
-	);
-
-});
-
-
-app.post('/api/:section/:action', function (req, res) {
-
-	twitter[req.params.section](
-		req.params.action,
-		req.body,
-		req.auth.accessToken,
-		req.auth.accessTokenSecret,
-		function(error, data, response) {
-			if (error) return res.status(error.statusCode).send("Error api POST " + req.params.section + "/" + req.params.action + ":" + JSON.stringify(error));
-			res.send(data);
-		}
-	);
-
-});
+app.use('/instagram', require('./routes/instagram'));
 
 
 app.use(function(req, res, next) {
@@ -259,42 +195,4 @@ var server = app.listen(app.get('port'), function () {
 	console.log('Tocotter listening :%s', app.get('port'));
 });
 
-var wss = new WebSocketServer({server: server});
-
-wss.on("connection", function(ws) {
-
-	var cookies = ws.upgradeReq.headers.cookie
-		.split(' ')
-		.reduce(function(result, current) {
-			var item = current.match(/(.*?)=(.*?);?$/);
-			result[item[1]] = item[2];
-			return result;
-		}, {});
-
-	Tokens.findOne({where: {accessToken: cookies.accessToken}}).then(function(token) {
-
-		if (!token) return;
-
-		twitter.getStream(
-			'user',
-			{},
-			token.accessToken,
-			token.accessTokenSecret,
-			function(err, data) {
-				if (err) ws.send(JSON.stringify(err), function() {
-
-				});
-
-				ws.send(JSON.stringify(data), function() {
-
-				});
-			}, function(err) {
-				if (err) ws.send(err);
-			}
-		);
-	});
-
-	ws.on("close", function() {
-
-	})
-});
+var wss = require('./routes/stream')(server);

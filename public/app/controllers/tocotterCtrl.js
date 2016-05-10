@@ -12,7 +12,7 @@ app.controller('TocotterCtrl', function($scope, $interval, twitter, timeline, co
 
 	stream.onMessage(function(msg) {
 		msg = JSON.parse(msg.data);
-		if (msg.created_at) {
+		if (msg.created_at && !msg.event) {
 			timeline.addTweets('home', msg, true);
 		}
 
@@ -23,6 +23,10 @@ app.controller('TocotterCtrl', function($scope, $interval, twitter, timeline, co
 		if (msg.delete) {
 			timeline.removeTweets(msg.delete.status);
 		}
+
+		//if (msg.event === 'favorite') {
+		//	timeline.favoriteTweet(msg.target_object, msg.source.id_str === user.uid);
+		//}
 	});
 	
 	$scope.refresh = function() {
