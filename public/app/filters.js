@@ -1,29 +1,3 @@
-app.filter('fromNow', function() {
-	return function(input) {
-
-		var inputDate = new Date().setTime(Date.parse(input));
-		var secodsOffset = (new Date() - inputDate) / 1000;
-		secodsOffset = Math.round(secodsOffset);
-
-		if (secodsOffset < 60) {
-			return 'Только что'
-		} else if (secodsOffset < 3600) {
-			return Math.round(secodsOffset / 60) + ' м'
-		} else if (secodsOffset < 86400) {
-			return Math.round(secodsOffset / 60 / 60) + ' ч'
-		} else {
-			return Math.round(secodsOffset / 60 / 60 / 24) + ' д'
-		}
-
-		// return moment(input).fromNow();
-		// var nowDate = new Date();
-		// var inputDate = new Date();
-		// 	inputDate.setTime(Date.parse(input));
-		// return nowDate - inputDate;
-	}
-});
-
-
 app.filter('entities', function($sce) {
 
 	return function(tweet) {
@@ -33,7 +7,7 @@ app.filter('entities', function($sce) {
 		var result = tweet.text;
 
 		if (tweet.text) {
-			result = tweet.text.replace("\n", "<br>");
+			result = tweet.text.replace(/\n/g, "<br>");
 		}
 
 		if (!tweet.entities) return;
@@ -85,5 +59,15 @@ app.filter('video', function() {
 			default:
 				return '';
 		}
+	}
+});
+
+app.filter('youtube', function() {
+	return function(input) {
+		var youtubeReg = /https:\/\/www\.youtube\.com\/watch\?v=(.*)/i;
+
+		return youtubeReg.test(input)
+			? input.replace(youtubeReg, "http://img.youtube.com/vi/$1/default.jpg")
+			: '';
 	}
 });

@@ -17,5 +17,8 @@
             <source vsrc="{{media | video}}" type="video/mp4">
         </video>
     </div>
-</div>
 
+    <div ng-repeat="url in status.entities.urls" class="tweet-media-item">
+        <img ng-src="{{url.expanded_url | youtube}}" ng-if="(url.expanded_url | youtube)" />
+    </div>
+</div>

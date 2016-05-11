@@ -12,6 +12,10 @@ app.controller('TocotterCtrl', function($scope, $interval, twitter, timeline, co
 
 	stream.onMessage(function(msg) {
 		msg = JSON.parse(msg.data);
+
+		if (msg.error) {
+			return console.error('Stream error:', msg.message);
+		}
 		if (msg.created_at && !msg.event) {
 			timeline.addTweets('home', msg, true);
 		}
@@ -39,6 +43,5 @@ app.controller('TocotterCtrl', function($scope, $interval, twitter, timeline, co
 		twitter.postMediaUpload(file).then(function(res) {
 			composer.media.push(res.data.media_id_string);
 		})
-	}
-
+	};
 });

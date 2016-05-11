@@ -121,7 +121,6 @@ app.service('timeline', function($cookies, twitter, CONFIG) {
 		return null;
 	};
 
-
 	var initTimelines = function() {
 		self.loadFromLocal(self.timelines);
 		// self.restorePosition();
