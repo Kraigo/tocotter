@@ -71,3 +71,9 @@ app.filter('youtube', function() {
 			: '';
 	}
 });
+
+app.filter('nohttps', function() {
+	return function (input) {
+		return input.replace('https://', '//').replace('http://', '//');
+	}
+})

@@ -11,14 +11,14 @@
 
 <div class="tweet-media" ng-class="{'more-media': status.extended_entities.media.length > 1 && !showMoreMedia }" ng-click="showMoreMedia = true">
     <div ng-repeat="media in status.extended_entities.media" class="tweet-media-item">
-        <img ng-src="{{media.media_url}}" ng-if="media.type === 'photo'">
+        <img ng-src="{{media.media_url | nohttps}}" ng-if="media.type === 'photo'">
 
         <video ng-if="media.type === 'animated_gif' || media.type === 'video'" controls loop >
-            <source vsrc="{{media | video}}" type="video/mp4">
+            <source vsrc="{{media | video | nohttps}}" type="video/mp4">
         </video>
     </div>
 
     <div ng-repeat="url in status.entities.urls" class="tweet-media-item">
-        <img ng-src="{{url.expanded_url | youtube}}" ng-if="(url.expanded_url | youtube)" />
+        <img ng-src="{{url.expanded_url | youtube | nohttps}}" ng-if="(url.expanded_url | youtube)" />
     </div>
 </div>

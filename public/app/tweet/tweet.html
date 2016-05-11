@@ -3,7 +3,7 @@
 	 short-click="$parent.timeline.addDetail(status)">
 
 	<div class="tweet-sidebar" ng-click="scrollToId(tweet.id_str)">
-		<span class="tweet-ava" ng-style="{'background-image': 'url({{tweet.retweeted_status.user.profile_image_url_https || tweet.user.profile_image_url_https}})'}"></span>
+		<span class="tweet-ava" ng-style="{'background-image': 'url({{(tweet.retweeted_status.user.profile_image_url || tweet.user.profile_image_url) | nohttps}})'}"></span>
 	</div>
 
 	<div class="tweet-content">
