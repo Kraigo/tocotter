@@ -19,6 +19,11 @@
     </div>
 
     <div ng-repeat="url in status.entities.urls" class="tweet-media-item">
-        <img ng-src="{{url.expanded_url | youtube | nohttps}}" ng-if="(url.expanded_url | youtube)" />
+        <div ng-if="(url.expanded_url | youtube)">
+            <a ng-href="{{url.expanded_url}}" class="playvideo" target="_blank">
+                <span class="playvideo-icon icon-video-play"></span>
+                <img ng-src="{{url.expanded_url | youtube | nohttps}}" />
+            </a>
+        </div>
     </div>
 </div>

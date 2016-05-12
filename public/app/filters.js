@@ -67,7 +67,7 @@ app.filter('youtube', function() {
 		var youtubeReg = /https:\/\/www\.youtube\.com\/watch\?v=(.*)/i;
 
 		return youtubeReg.test(input)
-			? input.replace(youtubeReg, "http://img.youtube.com/vi/$1/default.jpg")
+			? input.replace(youtubeReg, "http://img.youtube.com/vi/$1/hqdefault.jpg")
 			: '';
 	}
 });
