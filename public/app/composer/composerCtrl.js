@@ -11,9 +11,10 @@ app.directive('tctComposer', function() {
 
 app.controller('ComposerCtrl', function($scope, twitter, composer, timeline){
 	$scope.uploading = false;
+	$scope.size = 280;
 
 	$scope.updateStatus = function() {
-		if (composer.text.length == 0 && composer.text.length > 140) return false;
+		if (composer.text.length == 0 && composer.text.length > $scope.size) return false;
 
 		var params = {status: composer.text};
 
