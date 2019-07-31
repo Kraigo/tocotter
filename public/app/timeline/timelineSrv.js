@@ -72,7 +72,9 @@ app.service('timeline', function($cookies, twitter, CONFIG) {
 	self.restorePosition = function() {
 		var column = document.querySelector('#timeline-home .column');
 		var element = document.querySelector('#'+self.lastPosition());
-		column.scrollTop = element.offsetTop - element.offsetHeight;
+		if (element) {
+			column.scrollTop = element.offsetTop - element.offsetHeight;
+		}
 
 	};
 
